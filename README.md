@@ -43,8 +43,8 @@
 
 ### 1. Clone the Repository
 ```bash
-git clone [https://github.com/yourusername/CyberScan-Pro.git](https://github.com/yourusername/CyberScan-Pro.git)
-cd CyberScan-Pro
+git clone https://github.com/anand-mukul/CyberScan.git
+cd CyberScan
 
 ```
 
@@ -109,7 +109,7 @@ For educational testing, use these authorized vulnerable applications:
 
 | **Dashboard** | **Scan Results** |
 | --- | --- |
-|  |  |
+|![Home Screen Dashboard](/public/dashboard.png)|![Scan Result - Vulnerable Target](/public/scanResult.png)|
 
 ---
 
@@ -135,12 +135,12 @@ Contributions are welcome! Please fork the repo and create a pull request.
 
 ## 📝 License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the [MIT License](https://choosealicense.com/licenses/mit/). See `LICENSE` for more information.
 
 ---
 
 ### Author
 
-**[Your Name]**
+**Mukul Anand**
 *Cybersecurity Researcher & Developer*
-[LinkedIn Profile] | [GitHub Profile]
+[LinkedIn Profile](https://www.linkedin.com/in/dev-mukul) | [GitHub Profile](https://github.com/anand-mukul)
