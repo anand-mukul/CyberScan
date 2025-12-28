@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CyberScan | Security Audit</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='favicon.ico') }}"
+    />
+    <meta
+      name="description"
+      content="CyberScan is an advanced automated web vulnerability scanner built with Python. Detect SQL Injection, XSS, and security misconfigurations instantly with professional PDF reports."
+    />
+    <meta
+      name="keywords"
+      content="Vulnerability Scanner, SQL Injection Tool, XSS Scanner, Python Security Project, Automated Penetration Testing, OWASP Scanner, CyberScan Pro"
+    />
+    <meta name="author" content="Mukul Anand" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta
+      property="og:title"
+      content="CyberScan - Automated Vulnerability Intelligence"
+    />
+    <meta
+      property="og:description"
+      content="Scan your website for critical security flaws. Automated detection for SQLi, XSS, and Open Ports."
+    />
+    <meta
+      property="og:image"
+      content="{{ url_for('static', filename='og-preview.webp') }}"
+    />
+    <meta property="og:url" content="https://cyberscan.onrender.com" />
+    <meta property="og:type" content="website" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <div id="scanning-overlay">
+      <div class="scanner-radar"></div>
+      <div class="scan-text">INITIALIZING CYBER AUDIT...</div>
+      <div class="text-muted small mt-2">
+        Crawling Target • Injecting Payloads • Analyzing Headers
+      </div>
+    </div>
+
+    <div
+      class="container d-flex flex-column justify-content-center"
+      style="min-height: 100vh"
+    >
+      <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold">
+          Cyber<span class="text-info">Scan</span>
+        </h1>
+        <p class="text-muted">
+          Advanced Web Vulnerability Intelligence Platform
+        </p>
+      </div>
+
+      <div class="row justify-content-center w-100">
+        <div class="col-lg-5 mb-4">
+          <div class="card p-4 h-100">
+            <h4 class="mb-3 text-white">Manual Target</h4>
+
+            {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+            {% endif %}
+
+            <form
+              action="/scan"
+              method="POST"
+              id="scanForm"
+              onsubmit="showOverlay()"
+            >
+              <div class="mb-3">
+                <label for="url" class="form-label text-info">Target URL</label>
+                <input
+                  type="text"
+                  class="form-control form-control-lg"
+                  id="urlInput"
+                  name="url"
+                  placeholder="example.com"
+                  required
+                />
+              </div>
+
+              <div class="form-check mb-4">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  required
+                  id="consent"
+                  checked
+                />
+                <label class="form-check-label text-muted small" for="consent">
+                  I confirm authorization to scan this target.
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg w-100 fw-bold"
+                id="scanBtn"
+              >
+                START AUDIT
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-lg-5 mb-4">
+          <div class="card p-4 h-100">
+            <h4 class="mb-3 text-white">⚡ Quick Test Targets</h4>
+            <p class="text-muted small mb-3">Select a target to auto-scan:</p>
+
+            <div class="d-grid gap-2">
+              <button
+                class="btn btn-dark target-btn p-3"
+                onclick="quickScan('http://testphp.vulnweb.com/login.php')"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <strong>1. Acunetix PHP</strong>
+                  <span class="vuln-badge">VULNERABLE</span>
+                </div>
+                <small class="text-muted">SQLi, XSS, Path Disclosure</small>
+              </button>
+
+              <button
+                class="btn btn-dark target-btn p-3"
+                onclick="quickScan('http://demo.testfire.net')"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <strong>2. Altoro Mutual Bank</strong>
+                  <span class="vuln-badge">VULNERABLE</span>
+                </div>
+                <small class="text-muted">Financial App Simulation</small>
+              </button>
+
+              <button
+                class="btn btn-dark target-btn p-3"
+                onclick="quickScan('https://www.google.com')"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <strong>3. Google</strong>
+                  <span class="safe-badge">SECURE</span>
+                </div>
+                <small class="text-muted"
+                  >Zero Vulnerabilities (Baseline)</small
+                >
+              </button>
+
+              <button
+                class="btn btn-dark target-btn p-3"
+                onclick="quickScan('https://www.cuchd.in')"
+              >
+                <div class="d-flex justify-content-between align-items-center">
+                  <strong>4. Chandigarh University</strong>
+                  <span class="safe-badge">SECURE</span>
+                </div>
+                <small class="text-muted">Production Site Check</small>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="mt-5 text-muted text-center">
+        <small>&copy; 2025 Mukul Anand. All rights reserved.</small>
+      </footer>
+    </div>
+
+    <script>
+      function showOverlay() {
+        document.getElementById("scanning-overlay").style.display = "flex";
+      }
+
+      function quickScan(url) {
+        document.getElementById("urlInput").value = url;
+        document.getElementById("consent").checked = true;
+        showOverlay();
+        document.getElementById("scanForm").submit();
+      }
+    </script>
+  </body>
+</html>

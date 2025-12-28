@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CyberScan | Security Audit</title>
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="{{ url_for('static', filename='favicon.ico') }}"
+    />
+    <meta
+      name="description"
+      content="CyberScan is an advanced automated web vulnerability scanner built with Python. Detect SQL Injection, XSS, and security misconfigurations instantly with professional PDF reports."
+    />
+    <meta
+      name="keywords"
+      content="Vulnerability Scanner, SQL Injection Tool, XSS Scanner, Python Security Project, Automated Penetration Testing, OWASP Scanner, CyberScan Pro"
+    />
+    <meta name="author" content="Mukul Anand" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <meta
+      property="og:title"
+      content="CyberScan - Automated Vulnerability Intelligence"
+    />
+    <meta
+      property="og:description"
+      content="Scan your website for critical security flaws. Automated detection for SQLi, XSS, and Open Ports."
+    />
+    <meta
+      property="og:image"
+      content="{{ url_for('static', filename='og-preview.webp') }}"
+    />
+    <meta property="og:url" content="https://cyberscan.onrender.com" />
+    <meta property="og:type" content="website" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body class="p-4">
+    <div class="container" style="max-width: 1200px">
+      <div
+        class="d-flex justify-content-between align-items-center mb-5 border-bottom border-secondary pb-4"
+      >
+        <div>
+          <h1 class="display-6 fw-bold text-white">
+            <span class="text-info">CyberScan</span> Audit
+          </h1>
+          <p class="text-muted mb-0">
+            Target:
+            <span class="font-monospace text-light">{{ report.target }}</span>
+          </p>
+        </div>
+        <div>
+          <a href="/" class="btn btn-outline-light me-2">New Scan</a>
+          <a href="/download" class="btn btn-primary shadow-sm"
+            >Download PDF Report</a
+          >
+        </div>
+      </div>
+
+      <div class="row g-4 mb-5">
+        <div class="col-lg-4 d-flex justify-content-center align-items-center">
+          <div class="score-circle border-{{ report.grade_color }}">
+            <span class="display-1 fw-bold text-{{ report.grade_color }}"
+              >{{ report.grade }}</span
+            >
+            <span class="small text-muted text-uppercase fw-bold">Grade</span>
+          </div>
+        </div>
+
+        <div class="col-lg-8">
+          <div class="card h-100">
+            <div
+              class="card-header d-flex justify-content-between align-items-center"
+            >
+              <span>Executive Summary</span>
+              <span class="badge bg-{{ report.grade_color }}"
+                >Risk Score: {{ report.risk_score }}/10</span
+              >
+            </div>
+            <div class="card-body">
+              <p class="card-text text-light">
+                {% if report.grade in ['A', 'B'] %} This application
+                demonstrates a <strong>strong security posture</strong>. Defense
+                mechanisms are active, and no high-severity vulnerabilities were
+                detected during the automated audit. {% else %} This application
+                is <strong class="text-danger">AT RISK</strong>. The scanner
+                identified {{ report.vuln_count }} vulnerabilities that require
+                immediate remediation to prevent exploitation. {% endif %}
+              </p>
+
+              <div class="row text-center mt-4">
+                <div class="col-4 border-end border-secondary">
+                  <h3 class="text-white">{{ report.vuln_count }}</h3>
+                  <small class="text-muted text-uppercase">Issues</small>
+                </div>
+                <div class="col-4 border-end border-secondary">
+                  <h3 class="text-white">{{ report.forms_found }}</h3>
+                  <small class="text-muted text-uppercase">Forms</small>
+                </div>
+                <div class="col-4">
+                  <h3 class="text-white">{{ report.open_ports|length }}</h3>
+                  <small class="text-muted text-uppercase">Ports</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% if report.vuln_count > 0 %}
+      <h4 class="mb-3 text-white">⚠️ Vulnerability Analysis</h4>
+      <div class="accordion mb-5" id="vulnAccordion">
+        {% for vuln in report.vulnerabilities %}
+        <div
+          class="accordion-item bg-dark border-secondary mb-3 rounded overflow-hidden"
+        >
+          <h2 class="accordion-header">
+            <button
+              class="accordion-button collapsed shadow-none"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapse{{ loop.index }}"
+            >
+              <span class="badge bg-danger me-3">CRITICAL</span>
+              <strong>{{ vuln.type }}</strong>
+              <span class="ms-auto text-muted small font-monospace"
+                >{{ vuln.url }}</span
+              >
+            </button>
+          </h2>
+          <div
+            id="collapse{{ loop.index }}"
+            class="accordion-collapse collapse"
+            data-bs-parent="#vulnAccordion"
+          >
+            <div class="accordion-body bg-black border-top border-secondary">
+              <div class="row">
+                <div class="col-lg-6 mb-3">
+                  <h6 class="text-info text-uppercase small fw-bold">
+                    Technical Evidence
+                  </h6>
+                  <div class="p-3 bg-dark border border-secondary rounded">
+                    <small class="d-block text-muted mb-1"
+                      >Payload Injected:</small
+                    >
+                    <code class="text-danger">{{ vuln.payload }}</code>
+                  </div>
+                  <p class="mt-2 small text-muted">{{ vuln.desc }}</p>
+                </div>
+
+                <div class="col-lg-6">
+                  <h6 class="text-success text-uppercase small fw-bold">
+                    Remediation Strategy
+                  </h6>
+                  <p class="small text-white mb-2">
+                    <strong>Strategy:</strong> {{ vuln.fix_title }}
+                  </p>
+                  <div class="position-relative">
+                    <pre
+                      class="code-block"
+                    ><code>{{ vuln.fix_code }}</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div
+        class="alert alert-success d-flex align-items-center mb-5 bg-dark border-success text-success"
+      >
+        <span class="display-6 me-3">🛡️</span>
+        <div>
+          <h5 class="mb-0">System Secure</h5>
+          <small
+            >No critical injection flaws detected. Continue monitoring
+            logs.</small
+          >
+        </div>
+      </div>
+      {% endif %}
+
+      <div class="row g-4 mb-5">
+        <div class="col-lg-6">
+          <div class="card h-100">
+            <div class="card-header text-info">📡 Port Intelligence</div>
+            <div class="table-responsive">
+              <table class="table table-dark table-hover mb-0">
+                <thead>
+                  <tr>
+                    <th>Port</th>
+                    <th>Service</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% if report.ports %} {% for p in report.ports %}
+                  <tr>
+                    <td class="font-monospace text-secondary">{{ p.port }}</td>
+                    <td>{{ p.service }}</td>
+                    <td>
+                      {% if p.risk == 'High' or p.risk == 'Critical' %}
+                      <span class="badge bg-danger">RISK</span>
+                      {% else %}
+                      <span class="badge bg-success">SAFE</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% endfor %} {% else %}
+                  <tr>
+                    <td colspan="3" class="text-center text-muted p-3">
+                      No open ports found.
+                    </td>
+                  </tr>
+                  {% endif %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="card h-100">
+            <div class="card-header text-warning">🛡️ Security Headers</div>
+            <div class="card-body">
+              {% if report.headers.missing %}
+              <div class="d-flex flex-wrap gap-2 mb-3">
+                {% for h in report.headers.missing %}
+                <span class="badge bg-warning text-dark">{{ h }}</span>
+                {% endfor %}
+              </div>
+              <small class="text-muted"
+                >These headers help prevent XSS and Clickjacking.</small
+              >
+              {% else %}
+              <div class="text-center text-success py-4">
+                <h5>All Clear!</h5>
+                <p class="small">Server is configured correctly.</p>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
