@@ -110,7 +110,7 @@ For educational testing, use these authorized vulnerable applications:
 
 | **Dashboard** | **Scan Results** |
 | --- | --- |
-|![Home Screen Dashboard](/public/dashboard.png)|![Scan Result - Vulnerable Target](/public/scanResult.png)|
+|![Home Screen Dashboard](https://github.com/anand-mukul/CyberScan/blob/main/public/dashboard.png)|![Scan Result - Vulnerable Target](https://github.com/anand-mukul/CyberScan/blob/main/public/scanResult.png)|
 
 ---
 
